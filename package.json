@@ -3,11 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "cross-env NODE_OPTIONS=--max-old-space-size=2048 next dev",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=2048 next build",
+    "build:safe": "cross-env NODE_OPTIONS=--max-old-space-size=1024 next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "clean": "node scripts/clean.js",
+    "dev:clean": "npm run clean && npm run dev"
   },
   "dependencies": {
     "lucide-react": "^1.14.0",
@@ -25,6 +28,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.0.1",
+    "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "jsdom": "^29.1.1",
