@@ -1,11 +1,15 @@
+import { getTodos } from "@/app/actions/todos";
 import { TodoForm } from "@/components/features/todos/TodoForm";
+import { TodoList } from "@/components/features/todos/TodoList";
 
 export const metadata = {
   title: "My Todos",
   description: "Manage your todos",
 };
 
-export default function TodosPage() {
+export default async function TodosPage() {
+  const { data: todos } = await getTodos();
+
   return (
     <div className="flex flex-col flex-1 items-center bg-background font-sans">
       <main className="flex flex-col w-full max-w-xl gap-6 p-4 md:p-6 pt-12 md:pt-16">
@@ -18,23 +22,10 @@ export default function TodosPage() {
           </p>
         </header>
 
-        <section
-          aria-labelledby="add-todo-heading"
-          className="rounded-lg border border-zinc-200 bg-white p-4 shadow-sm md:p-6 dark:border-zinc-800 dark:bg-zinc-950"
-        >
-          <h2
-            id="add-todo-heading"
-            className="mb-4 text-sm font-medium text-zinc-700 dark:text-zinc-300"
-          >
-            Add a new todo
-          </h2>
-          <TodoForm />
-        </section>
+        <TodoForm />
 
-        <section aria-label="Todo list">
-          <p className="text-sm text-zinc-400 dark:text-zinc-500 italic">
-            Your todos will appear here.
-          </p>
+        <section aria-label="Your todo items">
+          <TodoList todos={todos} />
         </section>
       </main>
     </div>

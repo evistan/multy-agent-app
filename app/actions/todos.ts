@@ -2,6 +2,13 @@
 
 import { CreateTodoSchema, type CreateTodoInput } from "@/lib/validations/todo";
 
+export type ErrorCode = "VALIDATION" | "AUTH_REQUIRED" | "INTERNAL_ERROR";
+
+export type ActionError = {
+  message: string;
+  code: ErrorCode;
+};
+
 export type Todo = {
   id: string;
   title: string;
@@ -13,27 +20,44 @@ const todos: Todo[] = [];
 
 export async function createTodo(
   input: CreateTodoInput
-): Promise<{ data: Todo } | { error: { message: string; code: string } }> {
+): Promise<{ data: Todo } | { error: ActionError }> {
   // TODO: add auth check when auth is configured
   // Example: const session = await auth(); if (!session?.user) return { error: { message: "Unauthorized", code: "AUTH_REQUIRED" } };
 
-  const parsed = CreateTodoSchema.safeParse(input);
-  if (!parsed.success) {
+  try {
+    const parsed = CreateTodoSchema.safeParse(input);
+    if (!parsed.success) {
+      return {
+        error: {
+          message: "Invalid input",
+          code: "VALIDATION",
+        },
+      };
+    }
+
+    const newTodo: Todo = {
+      id: crypto.randomUUID(),
+      title: parsed.data.title,
+      createdAt: new Date().toISOString(),
+    };
+
+    todos.push(newTodo);
+
+    return { data: newTodo };
+  } catch (err) {
+    console.error("[createTodo] Unexpected error:", err);
     return {
       error: {
-        message: "Invalid input",
-        code: "VALIDATION",
+        message: "Something went wrong",
+        code: "INTERNAL_ERROR",
       },
     };
   }
+}
 
-  const newTodo: Todo = {
-    id: crypto.randomUUID(),
-    title: parsed.data.title,
-    createdAt: new Date().toISOString(),
-  };
+export async function getTodos(): Promise<{ data: Todo[] }> {
+  // TODO: add auth check when auth is configured
+  // Example: const session = await auth(); if (!session?.user) return { data: [] };
 
-  todos.push(newTodo);
-
-  return { data: newTodo };
+  return { data: todos };
 }
