@@ -95,7 +95,7 @@ The coordinator reads these files and forwards **only relevant parts** to the ne
 ## Domain Rules
 
 More detailed rules per domain are in `docs/`:
-- `docs/product/` — what the project does, user stories
+- `docs/product/<project-name>/` — current project requirements and user stories
 - `docs/design/ui-rules.md` — Tailwind, shadcn conventions
 - `docs/backend/api-rules.md` — REST/Server Actions patterns
 - `docs/backend/database-rules.md` — Prisma/Supabase, RLS, migrations
