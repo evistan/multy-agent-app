@@ -1,0 +1,56 @@
+name: Claude PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Review this pull request for the Next.js project.
+
+            Check for:
+            - TypeScript correctness (strict mode, no `any`)
+            - Security issues:
+              * Auth check on every mutation
+              * Ownership check (user A cannot access user B data)
+              * No service role keys in frontend
+              * No `dangerouslySetInnerHTML` with user input
+              * No SQL injection (must use Prisma, not raw queries)
+              * No exposed secrets
+            - Backend permission/RLS risks
+            - Missing tests (every endpoint should have: success, validation, auth tests)
+            - UI loading/error/empty/success states
+            - Unnecessary complexity or over-engineering
+            - Breaking changes to API contract
+            - Database migration safety (reversible? data migration needed?)
+
+            DO NOT:
+            - Rewrite code unless specifically requested
+            - Auto-approve the PR
+            - Suggest changes that don't align with CLAUDE.md
+
+            Post clear inline review comments on specific lines.
+            End with a final summary comment that includes:
+            - 🟢 Approve / 🟡 Request changes / 🔴 Block
+            - Top 3 issues (if any)
+            - Manual QA suggestions for the reviewer
+          claude_args: |
+            --max-turns 8
+            --model sonnet

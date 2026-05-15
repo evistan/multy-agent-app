@@ -1,0 +1,48 @@
+{
+  "agent": "coordinator-agent",
+  "permissions": {
+    "allow": [
+      "Bash(pnpm install:*)",
+      "Bash(pnpm dlx shadcn:*)",
+      "Bash(pnpm prisma generate)",
+      "Bash(pnpm prisma format)",
+      "Bash(pnpm prisma migrate dev:*)",
+      "Bash(pnpm prisma migrate status)",
+      "Bash(pnpm tsc:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm vitest:*)",
+      "Bash(pnpm playwright:*)",
+      "Bash(pnpm build)",
+      "Bash(pnpm dev:*)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(mkdir:*)",
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Bash(git push:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(pnpm prisma migrate reset:*)",
+      "Bash(pnpm prisma db push:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)"
+    ],
+    "ask": [
+      "Bash(git commit:*)",
+      "Bash(git checkout -b:*)",
+      "Bash(git branch:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm remove:*)"
+    ]
+  }
+}

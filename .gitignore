@@ -1,0 +1,24 @@
+# Agent output (can get large, no need in git)
+.agents/output/
+
+# Local settings (per-developer overrides)
+.claude/settings.local.json
+
+# Environment
+.env
+.env.local
+
+# Build
+.next/
+dist/
+node_modules/
+
+# Test
+coverage/
+test-results/
+playwright-report/
+playwright/.cache/
+
+# OS
+.DS_Store
+Thumbs.db
