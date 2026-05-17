@@ -1,6 +1,10 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+import { deleteTodo } from "@/app/actions/todos";
 
 interface TodoItemProps {
   id: string;
@@ -10,6 +14,20 @@ interface TodoItemProps {
 
 export function TodoItem({ id, title, createdAt }: TodoItemProps) {
   const formattedDate = new Date(createdAt).toLocaleString();
+  const router = useRouter();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    const result = await deleteTodo(id);
+    if ("error" in result) {
+      // silently reset — no complex error UI for now
+      setIsDeleting(false);
+      return;
+    }
+    router.refresh();
+    // no need to setIsDeleting(false) — component unmounts after refresh
+  };
 
   return (
     <div className="flex items-start gap-3 rounded-lg border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-950">
@@ -24,15 +42,20 @@ export function TodoItem({ id, title, createdAt }: TodoItemProps) {
       </div>
       <button
         type="button"
-        aria-label="Delete todo"
-        onClick={() => console.log("delete", id)}
+        aria-label={isDeleting ? "Deleting..." : "Delete todo"}
+        onClick={handleDelete}
+        disabled={isDeleting}
         className="shrink-0 rounded p-0.5 focus:outline-none focus:ring-2 focus:ring-zinc-800 focus:ring-offset-1 dark:focus:ring-zinc-100"
       >
-        <Trash2
-          size={16}
-          aria-hidden="true"
-          className="text-zinc-400 transition-colors duration-200 hover:text-red-500"
-        />
+        {isDeleting ? (
+          <Loader2 size={14} className="animate-spin" aria-hidden="true" />
+        ) : (
+          <Trash2
+            size={16}
+            aria-hidden="true"
+            className="text-zinc-400 transition-colors duration-200 hover:text-red-500"
+          />
+        )}
       </button>
     </div>
   );

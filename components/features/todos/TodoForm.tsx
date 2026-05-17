@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
 import { createTodo, type ActionError } from "@/app/actions/todos";
@@ -15,6 +16,7 @@ type SubmitState =
   | { type: "error"; error: ActionError };
 
 export function TodoForm() {
+  const router = useRouter();
   const [submitState, setSubmitState] = useState<SubmitState>({ type: "idle" });
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -59,6 +61,7 @@ export function TodoForm() {
       message: "Todo added successfully!",
     });
     reset();
+    router.refresh();
 
     // Clear success message after 3 seconds
     setTimeout(() => {

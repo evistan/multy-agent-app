@@ -12,6 +12,22 @@ vi.mock("lucide-react", () => ({
     React.createElement("svg", { "data-testid": "trash-icon" }),
 }));
 
+// Mock next/navigation
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({
+    refresh: vi.fn(),
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+    back: vi.fn(),
+  }),
+}));
+
+// Mock server actions
+vi.mock("@/app/actions/todos", () => ({
+  deleteTodo: vi.fn(),
+}));
+
 describe("TodoList", () => {
   describe("empty state", () => {
     it("renders EmptyState when todos array is empty", () => {

@@ -8,6 +8,7 @@ const projects = [
     name: "Todo App",
     description:
       "Task management application with full CRUD, auth and real-time updates.",
+    href: "/todos",
   },
 ];
 
@@ -33,7 +34,7 @@ export default function Home() {
             {projects.map((project) => (
               <Link
                 key={project.slug}
-                href={`/projects/${project.slug}`}
+                href={project.href}
                 className="group flex items-center justify-between rounded-lg border border-zinc-200 dark:border-zinc-800 px-5 py-4 hover:border-zinc-400 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all"
               >
                 <div>

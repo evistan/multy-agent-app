@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { getTodos } from "@/app/actions/todos";
 import { TodoForm } from "@/components/features/todos/TodoForm";
 import { TodoList } from "@/components/features/todos/TodoList";
@@ -13,6 +15,13 @@ export default async function TodosPage() {
   return (
     <div className="flex flex-col flex-1 items-center bg-background font-sans">
       <main className="flex flex-col w-full max-w-xl gap-6 p-4 md:p-6 pt-12 md:pt-16">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-black dark:hover:text-white transition-colors mb-10"
+        >
+          <ArrowLeft size={14} />
+          All projects
+        </Link>
         <header>
           <h1 className="text-lg font-semibold text-foreground md:text-2xl">
             My Todos
