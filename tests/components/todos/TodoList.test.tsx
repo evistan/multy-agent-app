@@ -1,5 +1,6 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { TodoList } from "@/components/features/todos/TodoList";
 import { EmptyState } from "@/components/features/todos/EmptyState";
 import type { Todo } from "@/app/actions/todos";
@@ -10,6 +11,8 @@ vi.mock("lucide-react", () => ({
     React.createElement("svg", { "data-testid": "check-circle-icon" }),
   Trash2: () =>
     React.createElement("svg", { "data-testid": "trash-icon" }),
+  Loader2: () =>
+    React.createElement("svg", { "data-testid": "loader-icon" }),
 }));
 
 // Mock next/navigation
@@ -27,6 +30,9 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/app/actions/todos", () => ({
   deleteTodo: vi.fn(),
 }));
+
+import { deleteTodo } from "@/app/actions/todos";
+const mockDeleteTodo = vi.mocked(deleteTodo);
 
 describe("TodoList", () => {
   describe("empty state", () => {
@@ -182,6 +188,62 @@ describe("EmptyState", () => {
 
       expect(heading).toBeVisible();
       expect(subtitle).toBeVisible();
+    });
+  });
+});
+
+describe("TodoItem delete button", () => {
+  const todo: Todo = {
+    id: "test-1",
+    title: "Buy milk",
+    createdAt: new Date().toISOString(),
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("renders a delete button with aria-label", () => {
+    render(<TodoList todos={[todo]} />);
+    const deleteButton = screen.getByRole("button", { name: /delete todo/i });
+    expect(deleteButton).toBeInTheDocument();
+  });
+
+  it("calls deleteTodo with the todo id when delete button is clicked", async () => {
+    mockDeleteTodo.mockResolvedValue({ data: { id: "test-1" } });
+    render(<TodoList todos={[todo]} />);
+
+    const user = userEvent.setup();
+    const deleteButton = screen.getByRole("button", { name: /delete todo/i });
+    await user.click(deleteButton);
+
+    await waitFor(() => {
+      expect(mockDeleteTodo).toHaveBeenCalledWith("test-1");
+    });
+  });
+
+  it("shows Loader2 spinner while deleting (button becomes disabled)", async () => {
+    mockDeleteTodo.mockImplementation(
+      () =>
+        new Promise((resolve) =>
+          setTimeout(
+            () => resolve({ data: { id: "test-1" } }),
+            500
+          )
+        )
+    );
+
+    render(<TodoList todos={[todo]} />);
+
+    const user = userEvent.setup();
+    const deleteButton = screen.getByRole("button", { name: /delete todo/i });
+    await user.click(deleteButton);
+
+    await waitFor(() => {
+      const deletingButton = screen.getByRole("button", {
+        name: /deleting/i,
+      });
+      expect(deletingButton).toBeDisabled();
     });
   });
 });

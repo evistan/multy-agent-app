@@ -1,4 +1,4 @@
-import { createTodo, getTodos } from "@/app/actions/todos";
+import { createTodo, deleteTodo, getTodos } from "@/app/actions/todos";
 
 describe("createTodo", () => {
   describe("valid input", () => {
@@ -140,5 +140,53 @@ describe("getTodos", () => {
         expect(typeof todo.createdAt).toBe("string");
       }
     });
+  });
+});
+
+describe("deleteTodo", () => {
+  it("deletes an existing todo and returns { data: { id } }", async () => {
+    const createResult = await createTodo({
+      title: "To be deleted " + Date.now(),
+    });
+    expect("data" in createResult).toBe(true);
+
+    if ("data" in createResult) {
+      const todoId = createResult.data.id;
+      const deleteResult = await deleteTodo(todoId);
+
+      expect("data" in deleteResult).toBe(true);
+      if ("data" in deleteResult) {
+        expect(deleteResult.data.id).toBe(todoId);
+      }
+    }
+  });
+
+  it("returns NOT_FOUND error for a non-existent id", async () => {
+    const result = await deleteTodo("non-existent-id-xyz");
+    expect("error" in result).toBe(true);
+    if ("error" in result) {
+      expect(result.error.code).toBe("NOT_FOUND");
+      expect(result.error.message).toBe("Todo not found");
+    }
+  });
+
+  it("removed todo no longer appears in getTodos", async () => {
+    const createResult = await createTodo({
+      title: "Will be deleted " + Date.now(),
+    });
+    expect("data" in createResult).toBe(true);
+
+    if ("data" in createResult) {
+      const todoId = createResult.data.id;
+
+      const deleteResult = await deleteTodo(todoId);
+      expect("data" in deleteResult).toBe(true);
+
+      const listResult = await getTodos();
+      expect("data" in listResult).toBe(true);
+      if ("data" in listResult) {
+        expect(listResult.data.some((t) => t.id === todoId)).toBe(false);
+      }
+    }
   });
 });
