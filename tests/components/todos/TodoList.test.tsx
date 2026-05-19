@@ -13,6 +13,10 @@ vi.mock("lucide-react", () => ({
     React.createElement("svg", { "data-testid": "trash-icon" }),
   Loader2: () =>
     React.createElement("svg", { "data-testid": "loader-icon" }),
+  Pin: () =>
+    React.createElement("svg", { "data-testid": "pin-icon" }),
+  Star: () =>
+    React.createElement("svg", { "data-testid": "star-icon" }),
 }));
 
 // Mock next/navigation
@@ -29,6 +33,7 @@ vi.mock("next/navigation", () => ({
 // Mock server actions
 vi.mock("@/app/actions/todos", () => ({
   deleteTodo: vi.fn(),
+  togglePinTodo: vi.fn(),
 }));
 
 import { deleteTodo } from "@/app/actions/todos";
@@ -55,6 +60,7 @@ describe("TodoList", () => {
           id: "1",
           title: "Buy milk",
           createdAt: new Date().toISOString(),
+          isPinned: false,
         },
       ];
 
@@ -69,6 +75,7 @@ describe("TodoList", () => {
           id: "1",
           title: "Buy milk",
           createdAt: new Date().toISOString(),
+          isPinned: false,
         },
       ];
 
@@ -82,6 +89,7 @@ describe("TodoList", () => {
           id: "1",
           title: "Buy milk",
           createdAt: new Date().toISOString(),
+          isPinned: false,
         },
       ];
 
@@ -92,9 +100,9 @@ describe("TodoList", () => {
     it("renders multiple todo items", () => {
       const now = new Date().toISOString();
       const todos: Todo[] = [
-        { id: "1", title: "Buy milk", createdAt: now },
-        { id: "2", title: "Walk the dog", createdAt: now },
-        { id: "3", title: "Read a book", createdAt: now },
+        { id: "1", title: "Buy milk", createdAt: now, isPinned: false },
+        { id: "2", title: "Walk the dog", createdAt: now, isPinned: false },
+        { id: "3", title: "Read a book", createdAt: now, isPinned: false },
       ];
 
       render(<TodoList todos={todos} />);
@@ -106,9 +114,9 @@ describe("TodoList", () => {
     it("renders correct number of list items", () => {
       const now = new Date().toISOString();
       const todos: Todo[] = [
-        { id: "1", title: "Todo 1", createdAt: now },
-        { id: "2", title: "Todo 2", createdAt: now },
-        { id: "3", title: "Todo 3", createdAt: now },
+        { id: "1", title: "Todo 1", createdAt: now, isPinned: false },
+        { id: "2", title: "Todo 2", createdAt: now, isPinned: false },
+        { id: "3", title: "Todo 3", createdAt: now, isPinned: false },
       ];
 
       render(<TodoList todos={todos} />);
@@ -122,6 +130,7 @@ describe("TodoList", () => {
           id: "1",
           title: "Buy milk",
           createdAt: new Date().toISOString(),
+          isPinned: false,
         },
       ];
 
@@ -135,8 +144,8 @@ describe("TodoList", () => {
     it("renders todo title in each item", () => {
       const now = new Date().toISOString();
       const todos: Todo[] = [
-        { id: "1", title: "First task", createdAt: now },
-        { id: "2", title: "Second task", createdAt: now },
+        { id: "1", title: "First task", createdAt: now, isPinned: false },
+        { id: "2", title: "Second task", createdAt: now, isPinned: false },
       ];
 
       render(<TodoList todos={todos} />);
@@ -150,6 +159,7 @@ describe("TodoList", () => {
           id: "1",
           title: "Buy milk",
           createdAt: new Date().toISOString(),
+          isPinned: false,
         },
       ];
 
@@ -197,6 +207,7 @@ describe("TodoItem delete button", () => {
     id: "test-1",
     title: "Buy milk",
     createdAt: new Date().toISOString(),
+    isPinned: false,
   };
 
   beforeEach(() => {

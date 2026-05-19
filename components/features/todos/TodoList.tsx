@@ -21,6 +21,7 @@ export function TodoList({ todos }: TodoListProps) {
             id={todo.id}
             title={todo.title}
             createdAt={todo.createdAt}
+            isPinned={todo.isPinned}
           />
         </li>
       ))}

@@ -36,6 +36,7 @@ describe("TodoForm", () => {
         id: "test-id-1",
         title: "Test todo",
         createdAt: new Date().toISOString(),
+        isPinned: false,
       },
     });
   });

@@ -13,6 +13,7 @@ export type Todo = {
   id: string;
   title: string;
   createdAt: string;
+  isPinned: boolean;
 };
 
 // In-memory store — replace with database persistence when ready
@@ -39,6 +40,7 @@ export async function createTodo(
       id: crypto.randomUUID(),
       title: parsed.data.title,
       createdAt: new Date().toISOString(),
+      isPinned: false,
     };
 
     todos.push(newTodo);
@@ -59,7 +61,35 @@ export async function getTodos(): Promise<{ data: Todo[] }> {
   // TODO: add auth check when auth is configured
   // Example: const session = await auth(); if (!session?.user) return { data: [] };
 
-  return { data: todos };
+  const sorted = [...todos].sort((a, b) => {
+    if (a.isPinned === b.isPinned) {
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    }
+    return a.isPinned ? -1 : 1;
+  });
+
+  return { data: sorted };
+}
+
+export async function togglePinTodo(
+  id: string
+): Promise<{ data: { id: string; isPinned: boolean } } | { error: ActionError }> {
+  // TODO: add auth check when auth is configured
+  // Example: const session = await auth(); if (!session?.user) return { error: { message: "Unauthorized", code: "AUTH_REQUIRED" } };
+
+  try {
+    const todo = todos.find((t) => t.id === id);
+    if (!todo) {
+      return { error: { message: "Todo not found", code: "NOT_FOUND" } };
+    }
+
+    todo.isPinned = !todo.isPinned;
+
+    return { data: { id: todo.id, isPinned: todo.isPinned } };
+  } catch (err) {
+    console.error("[togglePinTodo] Unexpected error:", err);
+    return { error: { message: "Something went wrong", code: "INTERNAL_ERROR" } };
+  }
 }
 
 export async function deleteTodo(
