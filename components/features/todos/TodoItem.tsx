@@ -39,7 +39,7 @@ export function TodoItem({ id, title, createdAt, isPinned }: TodoItemProps) {
       return;
     }
     router.refresh();
-    // no need to setIsPinning(false) — component re-renders after refresh
+    setIsPinning(false);
   };
 
   return (
